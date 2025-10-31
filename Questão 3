@@ -1,0 +1,89 @@
+//Árvore binária de busca: Questão 3
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+struct No {
+    string nome;
+    char sexo;
+    int idade;
+    float peso;
+    No* esquerda;
+    No* direita;
+};
+
+class ArvoreBinariaBusca {
+private:
+    No* raiz;
+
+    No* inserir(No* no, string nome, char sexo, int idade, float peso) {
+        if (no == nullptr) {
+            No* novo = new No();
+            novo->nome = nome;
+            novo->sexo = sexo;
+            novo->idade = idade;
+            novo->peso = peso;
+            novo->esquerda = nullptr;
+            novo->direita = nullptr;
+            return novo;
+        }
+        if (nome < no->nome)
+            no->esquerda = inserir(no->esquerda, nome, sexo, idade, peso);
+        else if (nome > no->nome)
+            no->direita = inserir(no->direita, nome, sexo, idade, peso);
+        return no;
+    }
+
+    void gerarListas(No* no, vector<No*>& homens, vector<No*>& mulheres) {
+        if (no != nullptr) {
+            gerarListas(no->esquerda, homens, mulheres);
+
+            if (no->sexo == 'M' || no->sexo == 'm')
+                homens.push_back(no);
+            else if (no->sexo == 'F' || no->sexo == 'f')
+                mulheres.push_back(no);
+
+            gerarListas(no->direita, homens, mulheres);
+        }
+    }
+
+public:
+    ArvoreBinariaBusca() {
+        raiz = nullptr;
+    }
+
+    void inserir(string nome, char sexo, int idade, float peso) {
+        raiz = inserir(raiz, nome, sexo, idade, peso);
+    }
+
+    void gerarListas(vector<No*>& homens, vector<No*>& mulheres) {
+        gerarListas(raiz, homens, mulheres);
+    }
+};
+
+int main() {
+    ArvoreBinariaBusca arvore;
+
+    arvore.inserir("Carlos", 'M', 30, 75.5);
+    arvore.inserir("Ana", 'F', 25, 60.2);
+    arvore.inserir("Bruno", 'M', 28, 80.0);
+    arvore.inserir("Fernanda", 'F', 35, 65.3);
+    arvore.inserir("Daniel", 'M', 40, 90.1);
+    arvore.inserir("Beatriz", 'F', 22, 55.4);
+
+    vector<No*> homens;
+    vector<No*> mulheres;
+
+    arvore.gerarListas(homens, mulheres);
+
+    cout << "Lista de Homens (ordenada por nome):" << endl;
+    for (auto h : homens)
+        cout << h->nome << " - " << h->idade << " anos, " << h->peso << " kg" << endl;
+
+    cout << "\nLista de Mulheres (ordenada por nome):" << endl;
+    for (auto m : mulheres)
+        cout << m->nome << " - " << m->idade << " anos, " << m->peso << " kg" << endl;
+
+    return 0;
+}
