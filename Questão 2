@@ -1,0 +1,66 @@
+#include <iostream>
+//Árvore binária de busca: Questão 2
+using namespace std;
+
+struct No {
+    int valor;
+    No* esquerda;
+    No* direita;
+};
+
+class ArvoreBinariaBusca {
+private:
+    No* raiz;
+
+    No* inserir(No* no, int valor) {
+        if (no == nullptr) {
+            No* novo = new No();
+            novo->valor = valor;
+            novo->esquerda = nullptr;
+            novo->direita = nullptr;
+            return novo;
+        }
+        if (valor < no->valor)
+            no->esquerda = inserir(no->esquerda, valor);
+        else if (valor > no->valor)
+            no->direita = inserir(no->direita, valor);
+        return no;
+    }
+
+    int maiorValor(No* no) {
+        if (no->direita == nullptr)
+            return no->valor;
+        return maiorValor(no->direita);
+    }
+
+public:
+    ArvoreBinariaBusca() {
+        raiz = nullptr;
+    }
+
+    void inserir(int valor) {
+        raiz = inserir(raiz, valor);
+    }
+
+    int maiorValor() {
+        if (raiz == nullptr) {
+            cout << "Arvore vazia!" << endl;
+            return -1;
+        }
+        return maiorValor(raiz);
+    }
+};
+
+int main() {
+    ArvoreBinariaBusca arvore;
+
+    int numeros[] = {20, 5, 12, 36, 27, 45, 9, 2, 6, 17, 40};
+    int tamanho = sizeof(numeros) / sizeof(numeros[0]);
+
+    for (int i = 0; i < tamanho; i++)
+        arvore.inserir(numeros[i]);
+
+    cout << "Maior valor da arvore: " << arvore.maiorValor() << endl;
+
+    return 0;
+}
