@@ -1,0 +1,112 @@
+#include <iostream>
+//Árvore binária de busca: questão 1 A e B
+using namespace std;
+
+struct No {
+    int valor;
+    No* esquerda;
+    No* direita;
+};
+
+class ArvoreBinariaBusca {
+private:
+    No* raiz;
+
+    No* inserir(No* no, int valor) {
+        if (no == nullptr) {
+            No* novo = new No();
+            novo->valor = valor;
+            novo->esquerda = nullptr;
+            novo->direita = nullptr;
+            return novo;
+        }
+        if (valor < no->valor)
+            no->esquerda = inserir(no->esquerda, valor);
+        else if (valor > no->valor)
+            no->direita = inserir(no->direita, valor);
+        return no;
+    }
+
+    void listar(No* no) {
+        if (no != nullptr) {
+            listar(no->esquerda);
+            cout << no->valor << " ";
+            listar(no->direita);
+        }
+    }
+
+    No* minimo(No* no) {
+        while (no && no->esquerda != nullptr)
+            no = no->esquerda;
+        return no;
+    }
+
+    No* remover(No* no, int valor) {
+        if (no == nullptr)
+            return no;
+
+        if (valor < no->valor)
+            no->esquerda = remover(no->esquerda, valor);
+        else if (valor > no->valor)
+            no->direita = remover(no->direita, valor);
+        else {
+            if (no->esquerda == nullptr && no->direita == nullptr) {
+                delete no;
+                return nullptr;
+            } else if (no->esquerda == nullptr) {
+                No* temp = no->direita;
+                delete no;
+                return temp;
+            } else if (no->direita == nullptr) {
+                No* temp = no->esquerda;
+                delete no;
+                return temp;
+            } else {
+                No* sucessor = minimo(no->direita);
+                no->valor = sucessor->valor;
+                no->direita = remover(no->direita, sucessor->valor);
+            }
+        }
+        return no;
+    }
+
+public:
+    ArvoreBinariaBusca() {
+        raiz = nullptr;
+    }
+
+    void inserir(int valor) {
+        raiz = inserir(raiz, valor);
+    }
+
+    void listar() {
+        listar(raiz);
+        cout << endl;
+    }
+
+    void remover(int valor) {
+        raiz = remover(raiz, valor);
+    }
+};
+
+int main() {
+    ArvoreBinariaBusca arvore;
+
+    int numeros[] = {20, 5, 12, 36, 27, 45, 9, 2, 6, 17, 40};
+    int tamanho = sizeof(numeros) / sizeof(numeros[0]);
+
+    for (int i = 0; i < tamanho; i++)
+        arvore.inserir(numeros[i]);
+
+    cout << "Arvore em ordem (antes das remocoes):" << endl;
+    arvore.listar();
+
+    int removerValores[] = {9, 5, 20};
+    for (int i = 0; i < 3; i++) {
+        cout << "\nRemovendo " << removerValores[i] << "..." << endl;
+        arvore.remover(removerValores[i]);
+        arvore.listar();
+    }
+
+    return 0;
+}
