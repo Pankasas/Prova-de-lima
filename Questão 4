@@ -1,0 +1,105 @@
+#include <iostream>
+//Árvore binária de busca: Questão 4
+using namespace std;
+
+struct No {
+    int chave;
+    int cont;
+    No* esq;
+    No* dir;
+};
+
+No* novoNo(int valor) {
+    No* no = new No;
+    no->chave = valor;
+    no->cont = 1;
+    no->esq = nullptr;
+    no->dir = nullptr;
+    return no;
+}
+
+No* inserir(No* raiz, int valor) {
+    if (raiz == nullptr)
+        return novoNo(valor);
+    if (valor == raiz->chave)
+        raiz->cont++;
+    else if (valor < raiz->chave)
+        raiz->esq = inserir(raiz->esq, valor);
+    else
+        raiz->dir = inserir(raiz->dir, valor);
+    return raiz;
+}
+
+No* menorNo(No* raiz) {
+    No* atual = raiz;
+    while (atual && atual->esq != nullptr)
+        atual = atual->esq;
+    return atual;
+}
+
+No* remover(No* raiz, int valor) {
+    if (raiz == nullptr)
+        return raiz;
+    if (valor < raiz->chave)
+        raiz->esq = remover(raiz->esq, valor);
+    else if (valor > raiz->chave)
+        raiz->dir = remover(raiz->dir, valor);
+    else {
+        if (raiz->cont > 1) {
+            raiz->cont--;
+            return raiz;
+        }
+        if (raiz->esq == nullptr) {
+            No* temp = raiz->dir;
+            delete raiz;
+            return temp;
+        } else if (raiz->dir == nullptr) {
+            No* temp = raiz->esq;
+            delete raiz;
+            return temp;
+        }
+        No* temp = menorNo(raiz->dir);
+        raiz->chave = temp->chave;
+        raiz->cont = temp->cont;
+        temp->cont = 1;
+        raiz->dir = remover(raiz->dir, temp->chave);
+    }
+    return raiz;
+}
+
+void emOrdem(No* raiz) {
+    if (raiz != nullptr) {
+        emOrdem(raiz->esq);
+        cout << raiz->chave << " (" << raiz->cont << ") ";
+        emOrdem(raiz->dir);
+    }
+}
+
+int main() {
+    No* raiz = nullptr;
+
+    raiz = inserir(raiz, 50);
+    raiz = inserir(raiz, 30);
+    raiz = inserir(raiz, 20);
+    raiz = inserir(raiz, 40);
+    raiz = inserir(raiz, 70);
+    raiz = inserir(raiz, 60);
+    raiz = inserir(raiz, 80);
+    raiz = inserir(raiz, 70);
+    raiz = inserir(raiz, 70);
+    raiz = inserir(raiz, 40);
+
+    cout << "Arvore em ordem (chave e contagem): ";
+    emOrdem(raiz);
+    cout << endl;
+
+    raiz = remover(raiz, 70);
+    raiz = remover(raiz, 40);
+    raiz = remover(raiz, 50);
+
+    cout << "Arvore apos remocoes: ";
+    emOrdem(raiz);
+    cout << endl;
+
+    return 0;
+}
