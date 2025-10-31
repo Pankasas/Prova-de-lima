@@ -1,0 +1,57 @@
+#include <iostream>
+//Árvore binária de busca: Questão 5
+using namespace std;
+
+struct No {
+    int chave;
+    No* esq;
+    No* dir;
+};
+
+No* novoNo(int valor) {
+    No* no = new No;
+    no->chave = valor;
+    no->esq = nullptr;
+    no->dir = nullptr;
+    return no;
+}
+
+No* inserir(No* raiz, int valor) {
+    if (raiz == nullptr)
+        return novoNo(valor);
+    if (valor < raiz->chave)
+        raiz->esq = inserir(raiz->esq, valor);
+    else if (valor > raiz->chave)
+        raiz->dir = inserir(raiz->dir, valor);
+    return raiz;
+}
+
+int arvoreCheia(No* raiz) {
+    if (raiz == nullptr)
+        return 1;
+    if (raiz->esq == nullptr && raiz->dir == nullptr)
+        return 1;
+    if (raiz->esq != nullptr && raiz->dir != nullptr)
+        return arvoreCheia(raiz->esq) && arvoreCheia(raiz->dir);
+    return 0;
+}
+
+int main() {
+    No* raiz = nullptr;
+
+    raiz = inserir(raiz, 50);
+    raiz = inserir(raiz, 30);
+    raiz = inserir(raiz, 70);
+    raiz = inserir(raiz, 20);
+    raiz = inserir(raiz, 40);
+    raiz = inserir(raiz, 60);
+    raiz = inserir(raiz, 80);
+
+    cout << "A arvore e cheia? " << arvoreCheia(raiz) << endl;
+
+    raiz->dir->dir = nullptr;
+
+    cout << "Apos remover um filho: " << arvoreCheia(raiz) << endl;
+
+    return 0;
+}
